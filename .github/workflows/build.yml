@@ -24,7 +24,7 @@ jobs:
           wget https://github.com/gbdev/rgbds/releases/download/v0.8.0/rgbds-0.8.0-linux-x86_64.tar.xz
           echo "Before Unzipping"
           ls -l
-          tar xf rgbds-0.8.0-linux-x86_64.tar.xz rgbds
+          tar xf rgbds-0.8.0-linux-x86_64.tar.xz -C rgbds
           echo "After Unzipping"
           ls -l
           cd rgbds
