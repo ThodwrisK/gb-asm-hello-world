@@ -22,10 +22,12 @@ jobs:
           sudo apt-get install -y build-essential wget
           # Download and install the latest stable RGBDS release
           wget https://github.com/gbdev/rgbds/releases/download/v0.8.0/rgbds-0.8.0-linux-x86_64.tar.xz
+          echo "Before Unzipping"
           ls -l
-          tar xf rgbds-0.8.0-linux-x86_64.tar.xz
+          tar xf rgbds-0.8.0-linux-x86_64.tar.xz rgbds
+          echo "After Unzipping"
           ls -l
-          cd rgbds-0.8.0-linux-x86_64
+          cd rgbds
           sudo mv rgbasm rgblink rgbfix rgbgfx /usr/local/bin/
           # Verify installation
           rgbasm -V || { echo "RGBDS installation failed"; exit 1; }
