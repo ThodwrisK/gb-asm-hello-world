@@ -19,11 +19,14 @@ jobs:
       - name: Install RGBDS
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
-          # Install RGBDS
-          wget https://github.com/rednex/rgbds/releases/download/v0.7.0/rgbds-0.7.0-linux-x86_64.tar.gz
-          tar -xzf rgbds-0.7.0-linux-x86_64.tar.gz
-          sudo mv rgbds-0.7.0/* /usr/local/bin/
+          sudo apt-get install -y build-essential wget
+          # Download and install the latest stable RGBDS release
+          wget https://github.com/gbdev/rgbds/releases/download/v0.8.0/rgbds-0.8.0-linux-x86_64.tar.gz
+          tar -xzf rgbds-0.8.0-linux-x86_64.tar.gz
+          cd rgbds-0.8.0
+          sudo mv rgbasm rgblink rgbfix rgbgfx /usr/local/bin/
+          # Verify installation
+          rgbasm -V || { echo "RGBDS installation failed"; exit 1; }
 
       # Compile the Game Boy ROM
       - name: Compile ROM
