@@ -1,0 +1,84 @@
+name: Build and Deploy Game Boy ROM with Emulator
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up RGBDS for Game Boy ROM compilation
+      - name: Install RGBDS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+          # Install RGBDS
+          wget https://github.com/rednex/rgbds/releases/download/v0.7.0/rgbds-0.7.0-linux-x86_64.tar.gz
+          tar -xzf rgbds-0.7.0-linux-x86_64.tar.gz
+          sudo mv rgbds-0.7.0/* /usr/local/bin/
+
+      # Compile the Game Boy ROM
+      - name: Compile ROM
+        run: |
+          # Assuming source code is in src/ (e.g., main.asm)
+          cd src
+          rgbasm -o game.o main.asm
+          rgblink -o game.gb game.o
+          rgbfix -v -p 0 game.gb
+          # Move the compiled ROM to an output directory
+          mkdir -p ../dist
+          mv game.gb ../dist/game.gb
+
+      # Set up EmulatorJS
+      - name: Setup EmulatorJS
+        run: |
+          # Download EmulatorJS
+          mkdir -p dist/emulatorjs
+          wget https://github.com/EmulatorJS/EmulatorJS/releases/download/v4.0.0/emulator.min.js -O dist/emulatorjs/emulator.min.js
+          wget https://github.com/EmulatorJS/EmulatorJS/releases/download/v4.0.0/emulator.js -O dist/emulatorjs/emulator.js
+          # Copy ROM to emulator directory
+          cp dist/game.gb dist/emulatorjs/game.gb
+
+      # Create index.html for EmulatorJS
+      - name: Create EmulatorJS HTML
+        run: |
+          cat <<EOT > dist/index.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Game Boy ROM Emulator</title>
+            <style>
+              body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; }
+              canvas { max-width: 100%; max-height: 100%; }
+            </style>
+          </head>
+          <body>
+            <div id="game"></div>
+            <script src="emulatorjs/emulator.min.js"></script>
+            <script>
+              EJS_player = '#game';
+              EJS_gameName = 'My Game Boy Game';
+              EJS_core = 'gb'; // Game Boy core
+              EJS_gameUrl = 'game.gb';
+              EJS_startOnLoad = true;
+            </script>
+            <script src="emulatorjs/emulator.js"></script>
+          </body>
+          </html>
+          EOT
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: ./
