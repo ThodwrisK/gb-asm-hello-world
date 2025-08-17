@@ -23,7 +23,8 @@ jobs:
           # Download and install the latest stable RGBDS release
           wget https://github.com/gbdev/rgbds/releases/download/v0.8.0/rgbds-0.8.0-linux-x86_64.tar.xz
           ls -l
-          tar -xzf rgbds-0.8.0-linux-x86_64.tar.xz
+          tar xf rgbds-0.8.0-linux-x86_64.tar.xz
+          ls -l
           cd rgbds-0.8.0-linux-x86_64
           sudo mv rgbasm rgblink rgbfix rgbgfx /usr/local/bin/
           # Verify installation
