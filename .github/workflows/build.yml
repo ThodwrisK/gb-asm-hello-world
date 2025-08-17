@@ -24,10 +24,10 @@ jobs:
           wget https://github.com/gbdev/rgbds/releases/download/v0.8.0/rgbds-0.8.0-linux-x86_64.tar.xz
           echo "Before Unzipping"
           ls -l
-          tar xf rgbds-0.8.0-linux-x86_64.tar.xz -C rgbds
+          tar xf rgbds-0.8.0-linux-x86_64.tar.xz --one-top-level
           echo "After Unzipping"
           ls -l
-          cd rgbds
+          cd rgbds-0.8.0-linux-x86_64
           sudo mv rgbasm rgblink rgbfix rgbgfx /usr/local/bin/
           # Verify installation
           rgbasm -V || { echo "RGBDS installation failed"; exit 1; }
